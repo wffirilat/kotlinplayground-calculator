@@ -8,7 +8,7 @@ class Calculator : ICalculator {
     override fun evaluate(formula: String): Double {
         val tokens = tokenize(formula)
         if (tokens.isEmpty()) throw ParseException("the input is empty")
-        val ast = parse(tokens)
+        val ast = Parser.parse(tokens)
         return ast.evaluate()
     }
 
@@ -26,7 +26,7 @@ class Calculator : ICalculator {
         pattern(OperatorMul, """\*""")
         pattern(OperatorSub, """\-""")
         pattern(OperatorDiv, """\/""")
-        pattern(Number, """[0-9\.]+""")
+        pattern(Number, """[0123456789\.]+""")
         pattern(Skip, """\ +""")
     }
 
@@ -38,6 +38,8 @@ class Calculator : ICalculator {
             inner@ for ((typ, regex) in tokenPatterns) {
                 val match = regex.find(formula, i)?.value ?: continue@inner
                 if (!formula.regionMatches(i, match, 0, match.length)) continue@inner
+                if (typ == Number && match.count { it == '.' } > 1)
+                    throw ParseException("there are two decimal points")
                 l.add(Token(match, typ))
                 i += match.length
                 continue@loop
@@ -45,9 +47,5 @@ class Calculator : ICalculator {
             break@loop
         }
         return l.toList()
-    }
-
-    fun parse(tokens: List<Token>): ASTNode {
-        TODO()
     }
 }

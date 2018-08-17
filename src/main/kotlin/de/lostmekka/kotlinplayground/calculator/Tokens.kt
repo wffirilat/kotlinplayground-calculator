@@ -10,5 +10,28 @@ enum class TokenType {
     OperatorSub,
     OperatorDiv,
     Number,
-    Skip
+    Skip,
+    EOF
+}
+
+class TokenStream(tkns: List<Token>) {
+    private val tokens = tkns
+    private var i = 0
+    val isFinished get() = i >= tokens.size
+
+    fun peek(): Token {
+        if (isFinished) return Token("", TokenType.EOF)
+        while (tokens[i].type == TokenType.Skip) i++
+        return tokens[i]
+    }
+
+    fun pop(): Token {
+        return peek().also { i++ }
+    }
+
+    fun expect(typ: TokenType): Token {
+        val t = pop()
+        if (t.type != typ) throw ParseException("Invalid syntax: expected ${typ.name}, got ${t.type.name}")
+        return t
+    }
 }
