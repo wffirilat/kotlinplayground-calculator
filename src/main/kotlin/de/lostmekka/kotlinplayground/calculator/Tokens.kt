@@ -15,13 +15,12 @@ enum class TokenType {
 }
 
 class TokenStream(tkns: List<Token>) {
-    private val tokens = tkns
+    private val tokens = tkns.filter { tkn -> tkn.type != TokenType.Skip }
     private var i = 0
     val isFinished get() = i >= tokens.size
 
     fun peek(): Token {
         if (isFinished) return Token("", TokenType.EOF)
-        while (tokens[i].type == TokenType.Skip) i++
         return tokens[i]
     }
 

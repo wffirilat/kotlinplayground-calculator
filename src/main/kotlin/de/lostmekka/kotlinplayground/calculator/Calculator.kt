@@ -26,7 +26,7 @@ class Calculator : ICalculator {
         pattern(OperatorMul, """\*""")
         pattern(OperatorSub, """\-""")
         pattern(OperatorDiv, """\/""")
-        pattern(Number, """[0123456789\.]+""")
+        pattern(Number, """-?[0123456789\.]+(E-?[1-9][0-9]*)?""")
         pattern(Skip, """\ +""")
     }
 
@@ -48,4 +48,15 @@ class Calculator : ICalculator {
         }
         return l.toList()
     }
+}
+
+fun main(args: Array<String>) {
+    val c = Calculator()
+    val formula = "-2.5*4 - 2 + 100/2/5 + 44"
+    val tokens = c.tokenize(formula).also { it.forEach {
+        println("${it.type}: \"${it.text}")
+    } }
+    val ast = Parser.parse(tokens).also { println(); print(it) }
+    println(); println()
+    println("$formula = ${ast.evaluate()}")
 }

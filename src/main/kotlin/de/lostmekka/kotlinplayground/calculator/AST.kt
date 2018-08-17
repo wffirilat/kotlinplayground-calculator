@@ -25,6 +25,17 @@ class BinaryOperator(val op: Operator, val left: ASTNode, val right: ASTNode) : 
             Sub -> return l - r
         }
     }
+
+    override fun toString(): String {
+        val opcode = when(op) {
+
+            Add -> "+"
+            Mul -> "*"
+            Div -> "/"
+            Sub -> "-"
+        }
+        return "($left $opcode $right)"
+    }
 }
 
 class UnaryOperator(val op: Operator, val value: ASTNode) : ASTNode() {
@@ -35,10 +46,18 @@ class UnaryOperator(val op: Operator, val value: ASTNode) : ASTNode() {
             else -> throw EvaluateException("$op is an invalid unary operator")
         }
     }
+
+    override fun toString(): String {
+        return "(-$value)"
+    }
 }
 
 class Value(val value: Double) : ASTNode() {
     override fun evaluate(): Double {
         return value
+    }
+
+    override fun toString(): String {
+        return value.toString()
     }
 }
